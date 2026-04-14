@@ -1,0 +1,17 @@
+node_modules/
+dist/
+.turbo/
+.env
+.env.local
+.env.*.local
+*.log
+.DS_Store
+
+# Expo
+.expo/
+apps/mobile/.expo/
+apps/mobile/ios/
+apps/mobile/android/
+
+# Test coverage
+coverage/
