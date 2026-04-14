@@ -2,6 +2,7 @@ import { Worker, type Job } from 'bullmq';
 import { redis } from '../redis.js';
 import { findCheckinByDate, escalateCheckin } from '../db/checkins.js';
 import { listContacts } from '../db/contacts.js';
+import { sendEscalationSms } from '../lib/sms.js';
 
 interface EscalationJobData {
   checkinId: string;
@@ -28,11 +29,8 @@ async function processEscalation(job: Job<EscalationJobData>): Promise<void> {
     return;
   }
 
-  // TODO (Week 6): send real Twilio SMS / push to contacts
   for (const contact of contacts) {
-    console.log(
-      `[escalation] → SMS to ${contact.name} (${contact.phone}): "${userName} hasn't checked in today. Please reach out."`,
-    );
+    await sendEscalationSms(contact.phone, userName);
   }
 
   console.log(`[escalation] Escalated for ${userName}, notified ${contacts.length} contact(s)`);
