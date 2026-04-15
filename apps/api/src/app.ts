@@ -11,6 +11,7 @@ import { contactRoutes } from './routes/contacts.js';
 import { checkinRoutes } from './routes/checkins.js';
 import { pauseRoutes } from './routes/pauses.js';
 import { deviceRoutes } from './routes/devices.js';
+import { twilioRoutes } from './routes/twilio.js';
 import { config } from './config.js';
 
 export async function buildApp() {
@@ -43,6 +44,7 @@ export async function buildApp() {
   await fastify.register(checkinRoutes, { prefix: '/checkins' });
   await fastify.register(pauseRoutes, { prefix: '/pauses' });
   await fastify.register(deviceRoutes, { prefix: '/devices' });
+  await fastify.register(twilioRoutes, { prefix: '/twilio' });
 
   // Health check
   fastify.get('/health', async () => ({ status: 'ok' }));
