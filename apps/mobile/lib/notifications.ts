@@ -32,15 +32,14 @@ export async function registerForPushNotificationsAsync(): Promise<void> {
     });
   }
 
-  // getExpoPushTokenAsync requires a valid EAS projectId — skip in local dev
+  // getDevicePushTokenAsync returns native FCM (Android) / APNs (iOS) token
+  // Works in development builds; skipped in Expo Go
   let fcmToken: string | null = null;
   try {
-    const token = await Notifications.getExpoPushTokenAsync();
-    fcmToken = token.data;
+    const token = await Notifications.getDevicePushTokenAsync();
+    fcmToken = token.data as string;
   } catch {
-    // No EAS project configured — push notifications won't work locally
-    // Will be set up when deploying to staging/production
-    console.log('[notifications] Skipping push token — EAS project not configured');
+    console.log('[notifications] Could not get device push token — running in Expo Go?');
     return;
   }
 

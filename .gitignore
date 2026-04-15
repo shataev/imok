@@ -13,5 +13,9 @@ apps/mobile/.expo/
 apps/mobile/ios/
 apps/mobile/android/
 
+# Firebase credentials
+apps/mobile/GoogleService-Info.plist
+apps/mobile/google-services.json
+
 # Test coverage
 coverage/
