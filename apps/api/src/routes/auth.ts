@@ -1,7 +1,6 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
-import { createOtp, verifyOtp } from '../lib/otp.js';
-import { sendOtpSms } from '../lib/sms.js';
+import { sendVerifyOtp, checkVerifyOtp } from '../lib/sms.js';
 import { issueTokens, rotateRefreshToken } from '../lib/tokens.js';
 import { findUserByPhone, createUser } from '../db/users.js';
 
@@ -23,8 +22,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post('/request-otp', async (request, reply) => {
     const { phone } = requestOtpSchema.parse(request.body);
 
-    const code = await createOtp(phone);
-    await sendOtpSms(phone, code);
+    await sendVerifyOtp(phone);
 
     fastify.log.info({ phone }, 'OTP sent');
     return reply.code(200).send({ message: 'OTP sent' });
@@ -34,7 +32,7 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
   fastify.post('/verify-otp', async (request, reply) => {
     const { phone, otp } = verifyOtpSchema.parse(request.body);
 
-    const isValid = await verifyOtp(phone, otp);
+    const isValid = await checkVerifyOtp(phone, otp);
     if (!isValid) {
       return reply.code(401).send({ error: 'Invalid or expired code' });
     }

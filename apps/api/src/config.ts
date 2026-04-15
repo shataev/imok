@@ -20,6 +20,7 @@ const envSchema = z.object({
   TWILIO_ACCOUNT_SID: z.string().min(1),
   TWILIO_AUTH_TOKEN: z.string().min(1),
   TWILIO_FROM_NUMBER: z.string().min(1),
+  TWILIO_VERIFY_SERVICE_SID: z.string().min(1),
 
   SENDGRID_API_KEY: z.string().min(1),
   SENDGRID_FROM_EMAIL: z.string().email(),
