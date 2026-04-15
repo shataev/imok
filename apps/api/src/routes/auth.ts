@@ -39,14 +39,15 @@ export const authRoutes: FastifyPluginAsync = async (fastify) => {
 
     // Find or create user
     let user = await findUserByPhone(phone);
+    const isNewUser = !user;
     if (!user) {
       user = await createUser(phone);
     }
 
     const tokens = await issueTokens(fastify, { id: user.id, phone: user.phone });
 
-    fastify.log.info({ userId: user.id }, 'User authenticated');
-    return reply.code(200).send(tokens);
+    fastify.log.info({ userId: user.id, isNewUser }, 'User authenticated');
+    return reply.code(200).send({ ...tokens, isNewUser });
   });
 
   // POST /auth/refresh

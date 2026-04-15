@@ -14,9 +14,9 @@ export default function OtpScreen() {
     if (otp.length !== 6) return;
     setLoading(true);
     try {
-      const res = await api.post<{ accessToken: string; refreshToken: string }>('/auth/verify-otp', { phone, otp });
+      const res = await api.post<{ accessToken: string; refreshToken: string; isNewUser: boolean }>('/auth/verify-otp', { phone, otp });
       await setTokens(res.accessToken, res.refreshToken);
-      router.replace('/(onboarding)/profile');
+      router.replace(res.isNewUser ? '/(onboarding)/profile' : '/(app)/home');
     } catch {
       Alert.alert('Wrong code', 'Please check the code and try again.');
     } finally {
