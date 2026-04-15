@@ -150,8 +150,6 @@ export default function SettingsScreen() {
 
   return (
     <ScrollView style={styles.scroll} contentContainerStyle={styles.container}>
-      <Text style={styles.pageTitle}>Settings</Text>
-
       <Section title="Profile">
         <Field label="Name">
           <TextInput

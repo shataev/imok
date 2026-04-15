@@ -69,7 +69,7 @@ export default function HistoryScreen() {
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={() => load(true)} tintColor="#22c55e" />
       }
-      ListHeaderComponent={<Text style={styles.title}>History</Text>}
+      ListHeaderComponent={null}
       renderItem={({ item }) => {
         const s = STATUS[item.status];
         return (

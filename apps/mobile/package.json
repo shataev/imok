@@ -12,6 +12,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
     "@imok/shared": "file:../../packages/shared",
     "@react-navigation/native": "^7.0.14",
     "expo": "~54.0.0",
