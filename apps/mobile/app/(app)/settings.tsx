@@ -136,7 +136,11 @@ export default function SettingsScreen() {
           text: 'Delete',
           style: 'destructive',
           onPress: async () => {
-            await api.delete('/user/me');
+            try {
+              await api.delete('/user/me');
+            } catch {
+              // Account may already be gone — proceed to logout anyway
+            }
             logout();
           },
         },

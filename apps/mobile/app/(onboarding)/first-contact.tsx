@@ -30,7 +30,10 @@ export default function FirstContactScreen() {
     const pickNumber = (number: string) => {
       const cleaned = number.replace(/\s/g, '');
       setPhone(cleaned);
-      setName(result.name ?? '');
+      const fullName = result.name
+        || [result.firstName, result.lastName].filter(Boolean).join(' ')
+        || '';
+      setName(fullName);
     };
 
     if (phoneNumbers.length === 1) {

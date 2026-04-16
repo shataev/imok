@@ -52,7 +52,9 @@ export default function ContactsScreen() {
       return;
     }
 
-    const name = result.name ?? '';
+    const name = result.name
+      || [result.firstName, result.lastName].filter(Boolean).join(' ')
+      || '';
 
     if (phoneNumbers.length === 1) {
       const phone = (phoneNumbers[0]?.number ?? '').replace(/\s/g, '');

@@ -45,7 +45,10 @@ export default function HomeScreen() {
     return <View style={styles.center}><ActivityIndicator size="large" color="#22c55e" /></View>;
   }
 
-  const statusCfg = checkin ? STATUS_CONFIG[checkin.status] : STATUS_CONFIG.pending;
+  const noCheckinToday = !checkin?.scheduledFor;
+  const statusCfg = (noCheckinToday)
+    ? { bg: '#f9fafb', label: 'No check-in scheduled yet', color: '#9ca3af' }
+    : STATUS_CONFIG[checkin!.status];
 
   return (
     <View style={styles.container}>
@@ -55,7 +58,7 @@ export default function HomeScreen() {
         <Text style={[styles.statusLabel, { color: statusCfg.color }]}>{statusCfg.label}</Text>
       </View>
 
-      {checkin?.status === 'pending' && (
+      {checkin?.status === 'pending' && checkin?.scheduledFor && (
         <Pressable style={[styles.okButton, confirming && styles.okButtonDisabled]} onPress={handleConfirm} disabled={confirming}>
           <Text style={styles.okButtonText}>{confirming ? '...' : "I'm OK"}</Text>
         </Pressable>

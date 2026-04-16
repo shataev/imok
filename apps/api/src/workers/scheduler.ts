@@ -2,41 +2,11 @@ import { Worker, type Job } from 'bullmq';
 import { redis } from '../redis.js';
 import { sql } from '../db/client.js';
 import { checkinQueue } from '../queues/index.js';
+import { localTimeToUtcToday } from '../lib/schedule.js';
 import type { User } from '@imok/shared';
 
 interface SchedulerJobData {
   triggeredAt: string;
-}
-
-// Convert "HH:MM" local time in a given timezone to a UTC Date for today
-function localTimeToUtcToday(timeStr: string, timezone: string): Date {
-  const [hours, minutes] = timeStr.split(':').map(Number);
-  const now = new Date();
-
-  // Build a date string in the target timezone for today
-  const formatter = new Intl.DateTimeFormat('en-CA', {
-    timeZone: timezone,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  });
-  const localDateStr = formatter.format(now); // "YYYY-MM-DD"
-
-  // Construct ISO string in local time, then let Date parse it as UTC offset
-  const localIso = `${localDateStr}T${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:00`;
-
-  // Use Intl to get the UTC offset at that moment in the timezone
-  const localDate = new Date(
-    new Date(localIso + 'Z').toLocaleString('en-US', { timeZone: 'UTC' }),
-  );
-
-  // Get the offset: difference between local time and UTC
-  const utcDate = new Date(
-    new Date(localIso + 'Z').toLocaleString('en-US', { timeZone: timezone }),
-  );
-  const offsetMs = localDate.getTime() - utcDate.getTime();
-
-  return new Date(new Date(localIso + 'Z').getTime() + offsetMs);
 }
 
 async function scheduleCheckins(_job: Job<SchedulerJobData>): Promise<void> {

@@ -1,6 +1,8 @@
 import type { FastifyPluginAsync } from 'fastify';
 import { z } from 'zod';
 import { findUserById, updateUser, deleteUser } from '../db/users.js';
+import { checkinQueue } from '../queues/index.js';
+import { localTimeToUtcToday } from '../lib/schedule.js';
 
 const updateUserSchema = z.object({
   name: z.string().min(1).max(100).optional(),
@@ -33,6 +35,24 @@ export const userRoutes: FastifyPluginAsync = async (fastify) => {
     if (payload.gracePeriodMin !== undefined) dbFields.grace_period_min = payload.gracePeriodMin;
 
     const user = await updateUser(request.user.id, dbFields);
+
+    // Schedule today's checkin if not already queued (handles new users who registered after midnight)
+    const checkinUtc = localTimeToUtcToday(user.checkinTime, user.timezone);
+    const delayMs = checkinUtc.getTime() - Date.now();
+    if (delayMs > -60 * 60 * 1000) {
+      const jobId = `checkin:${user.id}:${checkinUtc.toISOString().slice(0, 10)}`;
+      await checkinQueue.add(
+        'send-checkin',
+        {
+          userId: user.id,
+          userName: user.name ?? '',
+          gracePeriodMin: user.gracePeriodMin,
+          scheduledFor: checkinUtc.toISOString(),
+        },
+        { jobId, delay: Math.max(0, delayMs), removeOnComplete: true, removeOnFail: false },
+      );
+    }
+
     return reply.code(200).send(user);
   });
 
