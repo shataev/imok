@@ -5,6 +5,7 @@ import {
 import { router } from 'expo-router';
 import * as Contacts from 'expo-contacts';
 import { api } from '@/lib/api';
+import { PhoneInput } from '@/components/PhoneInput';
 
 export default function FirstContactScreen() {
   const [name, setName] = useState('');
@@ -28,7 +29,7 @@ export default function FirstContactScreen() {
     }
 
     const pickNumber = (number: string) => {
-      const cleaned = number.replace(/\s/g, '');
+      const cleaned = number.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
       setPhone(cleaned);
       const fullName = result.name
         || [result.firstName, result.lastName].filter(Boolean).join(' ')
@@ -91,7 +92,7 @@ export default function FirstContactScreen() {
       <TextInput style={styles.input} value={name} onChangeText={setName} placeholder="Jane (daughter)" />
 
       <Text style={styles.label}>Phone number</Text>
-      <TextInput style={styles.input} value={phone} onChangeText={setPhone} placeholder="+44 7700 900000" keyboardType="phone-pad" />
+      <PhoneInput value={phone} onChange={setPhone} />
 
       <Pressable style={[styles.button, loading && styles.buttonDisabled]} onPress={handleAdd} disabled={loading}>
         <Text style={styles.buttonText}>{loading ? 'Adding…' : "I'm ready"}</Text>

@@ -6,6 +6,7 @@ import {
 import * as Contacts from 'expo-contacts';
 import type { Contact } from '@imok/shared';
 import { api } from '@/lib/api';
+import { PhoneInput } from '@/components/PhoneInput';
 
 interface ContactFormData {
   name: string;
@@ -13,6 +14,11 @@ interface ContactFormData {
 }
 
 const EMPTY_FORM: ContactFormData = { name: '', phone: '' };
+
+// Strip everything except digits and a leading +
+function cleanPhone(raw: string): string {
+  return raw.replace(/[^\d+]/g, '').replace(/(?!^)\+/g, '');
+}
 
 export default function ContactsScreen() {
   const [contacts, setContacts] = useState<Contact[]>([]);
@@ -57,7 +63,7 @@ export default function ContactsScreen() {
       || '';
 
     if (phoneNumbers.length === 1) {
-      const phone = (phoneNumbers[0]?.number ?? '').replace(/\s/g, '');
+      const phone = cleanPhone(phoneNumbers[0]?.number ?? '');
       setEditingContact(null);
       setForm({ name, phone });
       setModalVisible(true);
@@ -71,7 +77,7 @@ export default function ContactsScreen() {
         { options: [...options, 'Cancel'], cancelButtonIndex: options.length, title: 'Which number?' },
         (index) => {
           if (index === options.length) return;
-          const phone = (phoneNumbers[index]?.number ?? '').replace(/\s/g, '');
+          const phone = cleanPhone(phoneNumbers[index]?.number ?? '');
           setEditingContact(null);
           setForm({ name, phone });
           setModalVisible(true);
@@ -79,7 +85,7 @@ export default function ContactsScreen() {
       );
     } else {
       // Android: use first number, user can edit manually
-      const phone = (phoneNumbers[0]?.number ?? '').replace(/\s/g, '');
+      const phone = cleanPhone(phoneNumbers[0]?.number ?? '');
       setEditingContact(null);
       setForm({ name, phone });
       setModalVisible(true);
@@ -208,12 +214,9 @@ export default function ContactsScreen() {
           {!editingContact && (
             <>
               <Text style={styles.label}>Phone number</Text>
-              <TextInput
-                style={styles.input}
+              <PhoneInput
                 value={form.phone}
-                onChangeText={(v) => setForm((f) => ({ ...f, phone: v }))}
-                placeholder="+44 7700 900000"
-                keyboardType="phone-pad"
+                onChange={(v) => setForm((f) => ({ ...f, phone: v }))}
               />
               <Text style={styles.hint}>They'll receive an SMS when you're added. No app needed.</Text>
             </>

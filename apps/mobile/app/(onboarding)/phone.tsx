@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable, Alert } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
 import { router } from 'expo-router';
 import { api } from '@/lib/api';
+import { PhoneInput } from '@/components/PhoneInput';
 
 export default function PhoneScreen() {
   const [phone, setPhone] = useState('');
@@ -27,15 +28,8 @@ export default function PhoneScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Your phone number</Text>
       <Text style={styles.hint}>We'll send you a one-time code to verify it's you.</Text>
-      <TextInput
-        style={styles.input}
-        value={phone}
-        onChangeText={setPhone}
-        placeholder="+66 81 234 5678"
-        keyboardType="phone-pad"
-        autoFocus
-        maxLength={16}
-      />
+      <PhoneInput value={phone} onChange={setPhone} autoFocus />
+      <View style={{ height: 32 }} />
       <Pressable style={[styles.button, loading && styles.buttonDisabled]} onPress={handleSendOtp} disabled={loading}>
         <Text style={styles.buttonText}>{loading ? 'Sending…' : 'Send code'}</Text>
       </Pressable>
