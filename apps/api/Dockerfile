@@ -10,6 +10,7 @@ RUN npm ci --workspace=@imok/api --workspace=@imok/shared
 
 # Build shared package
 FROM deps AS build-shared
+COPY tsconfig.base.json ./
 COPY packages/shared ./packages/shared
 RUN npm run build --workspace=@imok/shared
 
