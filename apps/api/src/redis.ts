@@ -3,4 +3,5 @@ import { config } from './config.js';
 
 export const redis = new Redis(config.REDIS_URL, {
   maxRetriesPerRequest: null, // required by BullMQ
+  tls: config.REDIS_URL.startsWith('rediss://') ? { rejectUnauthorized: false } : undefined,
 });
