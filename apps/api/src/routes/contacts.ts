@@ -45,7 +45,7 @@ export const contactRoutes: FastifyPluginAsync = async (fastify) => {
     const contact = await createContact(userId, {
       name: payload.name,
       phone: payload.phone,
-      email: payload.email ?? null,
+      ...(payload.email !== undefined ? { email: payload.email } : {}),
       notify_via_push: payload.notifyViaPush,
       notify_via_sms: payload.notifyViaSms,
       notify_via_email: payload.notifyViaEmail,

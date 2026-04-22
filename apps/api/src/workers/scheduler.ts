@@ -20,7 +20,7 @@ async function scheduleCheckins(_job: Job<SchedulerJobData>): Promise<void> {
     WHERE is_active = TRUE
   `;
 
-  const users = rows as Pick<User, 'id' | 'name' | 'timezone' | 'checkinTime' | 'gracePeriodMin'>[];
+  const users = rows as unknown as Pick<User, 'id' | 'name' | 'timezone' | 'checkinTime' | 'gracePeriodMin'>[];
 
   const now = new Date();
   let scheduled = 0;

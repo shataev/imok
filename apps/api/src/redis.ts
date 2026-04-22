@@ -1,6 +1,6 @@
-import IORedis from 'ioredis';
+import { Redis } from 'ioredis';
 import { config } from './config.js';
 
-export const redis = new IORedis(config.REDIS_URL, {
+export const redis = new Redis(config.REDIS_URL, {
   maxRetriesPerRequest: null, // required by BullMQ
 });

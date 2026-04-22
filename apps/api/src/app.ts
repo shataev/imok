@@ -58,7 +58,8 @@ export async function buildApp() {
       });
     }
     fastify.log.error(error);
-    return reply.code(error.statusCode ?? 500).send({ error: error.message });
+    const err = error as { statusCode?: number; message?: string };
+    return reply.code(err.statusCode ?? 500).send({ error: err.message ?? 'Internal Server Error' });
   });
 
   return fastify;
