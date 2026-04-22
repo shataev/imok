@@ -1,10 +1,10 @@
 import { useEffect, useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, FlatList, Pressable,
-  Alert, Modal, TextInput, ActivityIndicator, ActionSheetIOS, Platform,
+  Alert, Modal, TextInput, ActivityIndicator, ActionSheetIOS, Platform, Share,
 } from 'react-native';
 import * as Contacts from 'expo-contacts';
-import type { Contact } from '@imok/shared';
+import type { Contact, User } from '@imok/shared';
 import { api } from '@/lib/api';
 import { PhoneInput } from '@/components/PhoneInput';
 
@@ -27,11 +27,16 @@ export default function ContactsScreen() {
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
   const [form, setForm] = useState<ContactFormData>(EMPTY_FORM);
   const [saving, setSaving] = useState(false);
+  const [userName, setUserName] = useState('');
 
   const fetchContacts = useCallback(async () => {
     try {
-      const data = await api.get<Contact[]>('/contacts');
+      const [data, user] = await Promise.all([
+        api.get<Contact[]>('/contacts'),
+        api.get<User>('/user/me'),
+      ]);
       setContacts(data);
+      setUserName(user.name ?? '');
     } finally {
       setLoading(false);
     }
@@ -104,6 +109,15 @@ export default function ContactsScreen() {
     setModalVisible(true);
   };
 
+  const shareInvite = async (contactName: string) => {
+    const from = userName || 'Someone';
+    await Share.share({
+      message:
+        `Hi ${contactName}! ${from} added you as a trusted contact in imok.\n\n` +
+        `If they miss their daily check-in, you'll receive an SMS. No app needed on your end.`,
+    });
+  };
+
   const handleSave = async () => {
     if (!form.name.trim()) { Alert.alert('Name required'); return; }
     if (!form.phone.startsWith('+') || form.phone.length < 8) {
@@ -124,6 +138,9 @@ export default function ContactsScreen() {
           notifyViaSms: true,
         });
         setContacts((prev) => [...prev, created]);
+        setModalVisible(false);
+        shareInvite(created.name).catch(() => {});
+        return;
       }
       setModalVisible(false);
     } catch {

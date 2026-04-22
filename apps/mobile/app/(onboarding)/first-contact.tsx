@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  View, Text, TextInput, StyleSheet, Pressable, Alert, ScrollView, Platform, ActionSheetIOS,
+  View, Text, TextInput, StyleSheet, Pressable, Alert, ScrollView, Platform, ActionSheetIOS, Share,
 } from 'react-native';
 import { router } from 'expo-router';
 import * as Contacts from 'expo-contacts';
+import type { User } from '@imok/shared';
 import { api } from '@/lib/api';
 import { PhoneInput } from '@/components/PhoneInput';
 
@@ -11,6 +12,11 @@ export default function FirstContactScreen() {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [loading, setLoading] = useState(false);
+  const [userName, setUserName] = useState('');
+
+  useEffect(() => {
+    api.get<User>('/user/me').then(u => setUserName(u.name ?? '')).catch(() => {});
+  }, []);
 
   const handlePickContact = async () => {
     const { status } = await Contacts.requestPermissionsAsync();
@@ -67,12 +73,19 @@ export default function FirstContactScreen() {
     setLoading(true);
     try {
       await api.post('/contacts', { name: name.trim(), phone, notifyViaSms: true });
-      router.replace('/(app)/home');
     } catch {
       Alert.alert('Error', 'Could not add contact. Please try again.');
-    } finally {
       setLoading(false);
+      return;
     }
+    setLoading(false);
+    const from = userName || 'Someone';
+    await Share.share({
+      message:
+        `Hi ${name.trim()}! ${from} added you as a trusted contact in imok.\n\n` +
+        `If they miss their daily check-in, you'll receive an SMS. No app needed on your end.`,
+    }).catch(() => {});
+    router.replace('/(app)/home');
   };
 
   return (
