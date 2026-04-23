@@ -179,6 +179,7 @@ export default function SettingsScreen() {
           />
         </Field>
         <Field label="Grace period">
+          <Text style={styles.fieldHint}>How long after your check-in time before your contacts are alerted.</Text>
           <View style={styles.chips}>
             {GRACE_OPTIONS.map(opt => (
               <Pressable
@@ -291,7 +292,8 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 13, fontWeight: '600', color: '#6b7280', textTransform: 'uppercase', letterSpacing: 0.8, marginBottom: 14 },
 
   field: { marginBottom: 16 },
-  fieldLabel: { fontSize: 15, color: '#374151', marginBottom: 8 },
+  fieldLabel: { fontSize: 15, color: '#374151', marginBottom: 4 },
+  fieldHint: { fontSize: 13, color: '#9ca3af', marginBottom: 10 },
   input: {
     borderWidth: 1.5,
     borderColor: '#e5e7eb',

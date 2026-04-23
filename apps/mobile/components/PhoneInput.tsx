@@ -158,8 +158,10 @@ const styles = StyleSheet.create({
   countryPicker: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     paddingVertical: 14,
+    minWidth: 90,
+    minHeight: 52,
     borderRightWidth: 1.5,
     borderRightColor: '#e5e7eb',
     gap: 4,

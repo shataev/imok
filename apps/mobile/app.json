@@ -10,7 +10,10 @@
       "supportsTablet": false,
       "bundleIdentifier": "app.imok",
       "buildNumber": "1",
-      "googleServicesFile": "./GoogleService-Info.plist"
+      "googleServicesFile": "./GoogleService-Info.plist",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "package": "app.imok",
@@ -27,8 +30,10 @@
     },
     "extra": {
       "eas": {
-        "projectId": "your-eas-project-id"
-      }
-    }
+        "projectId": "65c12830-3c3c-44d6-aab5-747170fc6381"
+      },
+      "router": {}
+    },
+    "owner": "shataev"
   }
 }
